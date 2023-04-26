@@ -6,6 +6,9 @@ import logging
 from typing import List
 
 
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
+
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """filtered_logger function that,
@@ -56,3 +59,19 @@ class RedactingFormatter(logging.Formatter):
         """
         return filter_datum(self.fields, self.REDACTION,
                             super().format(record), self.SEPARATOR)
+
+
+def get_logger() -> logging.Logger:
+    """get_logger function that takes no arguments and
+    returns a logging.Logger object
+
+    Returns:
+        logging.Logger: object
+    """
+    handler = logging.StreamHandler()
+    formatter = RedactingFormatter(PII_FIELDS)
+    handler.setFormatter(formatter)
+    logger = logging.getLogger("user_data").setLevel(
+        logging.INFO).addHandler(handler)
+    logger.propagate = False
+    return logger
