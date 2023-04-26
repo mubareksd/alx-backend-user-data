@@ -68,10 +68,11 @@ def get_logger() -> logging.Logger:
     Returns:
         logging.Logger: object
     """
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
     handler = logging.StreamHandler()
     formatter = RedactingFormatter(PII_FIELDS)
     handler.setFormatter(formatter)
-    logger = logging.getLogger("user_data").setLevel(
-        logging.INFO).addHandler(handler)
-    logger.propagate = False
+    logger.addHandler(handler)
     return logger
