@@ -92,3 +92,23 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     database = os.getenv("PERSONAL_DATA_DB_NAME")
     return mysql.connector.connect(user=user, password=password,
                                    host=host, database=database)
+
+
+def main():
+    """main function that connects to the database and retrieves all rows
+    in the users table and display each row under a filtered format
+    """
+    conn = get_db()
+    logger = get_logger()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users;")
+    fields = cursor.column_names
+    for row in cursor:
+        message = "".join(f"{f}={str(r)}" for f, r in zip(fields, row))
+        logger.info(message.strip())
+    cursor.close()
+    conn.close()
+
+
+if __name__ == '__main__':
+    main()
