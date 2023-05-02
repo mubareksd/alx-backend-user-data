@@ -19,9 +19,6 @@ class Auth:
         Returns:
             bool: _description_
         """
-        if path is not None and path[-1] != '/':
-            path += '/'
-
         if excluded_paths is not None:
             for excluded in excluded_paths:
                 if excluded.startswith(path):
