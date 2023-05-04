@@ -2,6 +2,7 @@
 """
 SessionDBAuth module for the API
 """
+from datetime import datetime, timedelta
 from models.user_session import UserSession
 from api.v1.auth.session_exp_auth import SessionExpAuth
 
@@ -28,10 +29,18 @@ class SessionDBAuth(SessionExpAuth):
         Args:
             session_id (_type_, optional): _description_. Defaults to None.
         """
-        user_id = UserSession.search({"session_id": session_id})
-        if not user_id:
+        try:
+            sessions = UserSession.search({'session_id': session_id})
+        except Exception:
             return None
-        return user_id
+        if len(sessions) <= 0:
+            return None
+        cur_time = datetime.now()
+        time_span = timedelta(seconds=self.session_duration)
+        exp_time = sessions[0].created_at + time_span
+        if exp_time < cur_time:
+            return None
+        return sessions[0].user_id
 
     def destroy_session(self, request=None):
         """_summary_
