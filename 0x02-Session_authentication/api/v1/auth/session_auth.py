@@ -50,3 +50,18 @@ class SessionAuth(Auth):
         user_id = self.user_id_for_session_id(session_cookie)
         user = User.get(user_id)
         return user
+
+    def destroy_session(self, request=None):
+        """_summary_
+
+        Args:
+            request (_type_, optional): _description_. Defaults to None.
+        """
+        if request is None:
+            return False
+        if not self.session_cookie(request):
+            return False
+        if not self.user_id_for_session_id(self.session_cookie(request)):
+            return False
+        self.user_id_by_session_id.pop(self.session_cookie(request))
+        return True
