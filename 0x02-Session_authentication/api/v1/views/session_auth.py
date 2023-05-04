@@ -34,7 +34,7 @@ def auth_session_login():
 
 @app_views.route('/api/v1/auth_session/logout',
                  methods=['DELETE'], strict_slashes=False)
-def logout():
+def logout() -> str:
     """ DELETE /api/v1/auth_session/logout
     Return:
       - an empty dictionary
