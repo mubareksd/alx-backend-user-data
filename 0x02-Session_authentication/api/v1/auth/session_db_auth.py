@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""
+SessionDBAuth module for the API
+"""
+from models.user_session import UserSession
+from api.v1.auth.session_exp_auth import SessionExpAuth
+
+
+class SessionDBAuth(SessionExpAuth):
+    """_summary_
+    """
+    def create_session(self, user_id=None):
+        """_summary_
+
+        Args:
+            user_id (_type_, optional): _description_. Defaults to None.
+        """
+        session_id = super().create_session(user_id)
+        if not session_id:
+            return None
+        user_session = UserSession(user_id=user_id, session_id=session_id)
+        user_session.save()
+        return session_id
+
+    def user_id_for_session_id(self, session_id=None):
+        """_summary_
+
+        Args:
+            session_id (_type_, optional): _description_. Defaults to None.
+        """
+        user_id = UserSession.search({"session_id": session_id})
+        if not user_id:
+            return None
+        return user_id
+
+    def destroy_session(self, request=None):
+        """_summary_
+
+        Args:
+            request (_type_, optional): _description_. Defaults to None.
+        """
+        session_id = self.session_cookie(request)
+        try:
+            sessions = UserSession.search({'session_id': session_id})
+        except Exception:
+            return False
+        if len(sessions) <= 0:
+            return False
+        sessions[0].remove()
+        return True
