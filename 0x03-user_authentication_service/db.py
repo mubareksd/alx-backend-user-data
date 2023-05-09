@@ -2,9 +2,10 @@
 """DB module
 """
 from sqlalchemy import create_engine
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.exc import NoResultFound, InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 from user import Base, User
 
@@ -56,7 +57,7 @@ class DB:
         """
         users = self._session.query(User)
         for key, value in kwargs.items():
-            if not hasattr(User, key):
+            if key not in User.__dict__:
                 raise InvalidRequestError
             for user in users:
                 if getattr(user, key) == value:
