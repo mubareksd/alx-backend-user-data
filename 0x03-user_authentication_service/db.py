@@ -54,11 +54,7 @@ class DB:
         Returns:
             User: the user found
         """
-        users = self.__session.query(User)
-        for key, value in kwargs.items():
-            if key not in User.__dict__:
-                raise InvalidRequestError
-            for user in users:
-                if getattr(user, key) == value:
-                    return user
-        raise NoResultFound
+        users = self.__session.query(User).filter_by(**kwargs).all()
+        if user is None:
+            raise NoResultFound()
+        return users
