@@ -63,3 +63,16 @@ class DB:
                 if getattr(user, key) == value:
                     return user
         raise NoResultFound
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Method that updates a user in the database.
+
+        Args:
+            user_id (int): user id to update
+        """
+        user = self.find_user_by(id=user_id)
+        for key, value in kwargs.items():
+            if key not in User.__dict__:
+                raise ValueError
+            setattr(user, key, value)
+        self._session.commit()
