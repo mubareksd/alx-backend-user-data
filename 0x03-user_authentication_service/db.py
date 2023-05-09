@@ -5,7 +5,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-
 from user import Base, User
 
 
@@ -30,15 +29,15 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email, hashed_password):
+    def add_user(self, email: str, hashed_password: str) -> User:
         """Method that saves a new user to the database.
 
         Args:
-            email ([type]): [description]
-            hashed_password ([type]): [description]
+            email (String): email of the user
+            hashed_password (String): hashed password of the user
 
         Returns:
-            User : object User
+            user (User): the user created
         """
         user = User(email=email, hashed_password=hashed_password)
         self._session.add(user)
