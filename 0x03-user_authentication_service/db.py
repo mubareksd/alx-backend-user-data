@@ -54,7 +54,11 @@ class DB:
         Returns:
             User: the user found
         """
-        users = self._session.query(User).filter_by(**kwargs).first()
-        if user is None:
-            raise NoResultFound()
-        return users
+        users = self._session.query(User)
+        for key, value in kwargs.items():
+            if not hasattr(User, key):
+                raise InvalidRequestError
+            users = users.filter(getattr(User, key) == value)
+        if users is None:
+            raise NoResultFound
+        return users.one()
