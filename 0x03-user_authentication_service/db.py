@@ -58,7 +58,6 @@ class DB:
         for key, value in kwargs.items():
             if not hasattr(User, key):
                 raise InvalidRequestError
-            users = users.filter(getattr(User, key) == value)
             for user in users:
                 if getattr(user, key) == value:
                     return user
