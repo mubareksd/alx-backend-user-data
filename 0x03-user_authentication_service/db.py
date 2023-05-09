@@ -4,6 +4,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 from user import Base, User
 
@@ -43,3 +44,22 @@ class DB:
         self._session.add(user)
         self._session.commit()
         return user
+
+    def find_user_by(self, **kwargs) -> User:
+        """Method that finds a user in the database.
+
+        Args:
+            kwargs (dict): arguments to search for a user
+
+        Returns:
+            User: the user found
+        """
+        users = self.__session.query(User)
+        for key, value in kwargs.items():
+            if not hasattr(User, key):
+                raise InvalidRequestError
+            users = users.filter(getattr(User, key) == value)
+            for user in users:
+                if getattr(user, key) == value:
+                    return user
+        raise NoResultFound
