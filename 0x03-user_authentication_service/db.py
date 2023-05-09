@@ -54,7 +54,7 @@ class DB:
         Returns:
             User: the user found
         """
-        users = self.__session.query(User).filter_by(**kwargs).all()
+        users = self._session.query(User).filter_by(**kwargs).first()
         if user is None:
             raise NoResultFound()
         return users
