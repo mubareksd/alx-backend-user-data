@@ -56,7 +56,7 @@ class DB:
         """
         users = self.__session.query(User)
         for key, value in kwargs.items():
-            if not hasattr(User, key):
+            if key not in User.__dict__:
                 raise InvalidRequestError
             for user in users:
                 if getattr(user, key) == value:
