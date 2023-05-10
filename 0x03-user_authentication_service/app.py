@@ -3,7 +3,7 @@
 App module
 """
 
-from flask import abort, Flask, jsonify, request
+from flask import abort, Flask, jsonify, redirect, request
 from auth import Auth
 
 
@@ -54,6 +54,23 @@ def login() -> str:
     res = jsonify({"email": f"{email}", "message": "logged in"})
     res.set_cookie("session_id", session_id)
     return res
+
+
+@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
+def logout():
+    """method that returns user payload
+
+    Returns:
+        str: message
+    """
+    session_id = request.cookies.get("session_id")
+    if session_id is None:
+        return None
+    user = Auth.get_user_from_session_id(session_id)
+    if user is None:
+        return None
+    Auth.destroy_session(user.id)
+    return redirect("/")
 
 
 if __name__ == "__main__":
