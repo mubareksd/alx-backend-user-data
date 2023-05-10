@@ -63,7 +63,7 @@ def logout():
     Returns:
         str: message
     """
-    session_id = request.cookies.get("session_id")
+    session_id = request.cookies.get("session_id", None)
     if session_id is None:
         return None
     user = Auth.get_user_from_session_id(session_id)
