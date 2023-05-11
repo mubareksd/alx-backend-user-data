@@ -5,6 +5,12 @@ Main file
 import requests
 
 
+EMAIL = "guillaume@holberton.io"
+PASSWD = "b4l0u"
+NEW_PASSWD = "t4rt1fl3tt3"
+BASE_URL = "http://127.0.0.1:5000"
+
+
 def register_user(email: str, password: str) -> None:
     """_summary_
 
@@ -12,7 +18,7 @@ def register_user(email: str, password: str) -> None:
         email (str): _description_
         password (str): _description_
     """
-    res = requests.post('http://127.0.0.1:5000/users',
+    res = requests.post(f"{BASE_URL}/users",
                         data={'email': email, 'password': password})
     if res.status_code == 200:
         assert (res.json() == {"email": email, "message": "user created"})
@@ -28,8 +34,8 @@ def log_in_wrong_password(email: str, password: str) -> None:
         email (str): _description_
         password (str): _description_
     """
-    res = requests.post('http://127.0.0.1:5000/sessions',
-                      data={'email': email, 'password': password})
+    res = requests.post(f"{BASE_URL}/sessions",
+                        data={'email': email, 'password': password})
     assert (res.status_code == 401)
 
 
@@ -43,7 +49,7 @@ def log_in(email: str, password: str) -> str:
     Returns:
         str: _description_
     """
-    res = requests.post('http://127.0.0.1:5000/sessions',
+    res = requests.post(f"{BASE_URL}/sessions",
                         data={'email': email, 'password': password})
     assert (res.status_code == 200)
     assert(res.json() == {"email": email, "message": "logged in"})
@@ -53,7 +59,7 @@ def log_in(email: str, password: str) -> str:
 def profile_unlogged() -> None:
     """_summary_
     """
-    res = requests.get('http://127.0.0.1:5000/profile')
+    res = requests.get(f"{BASE_URL}/profile")
     assert(res.status_code == 403)
 
 
@@ -63,7 +69,7 @@ def profile_logged(session_id: str) -> None:
     Args:
         session_id (str): _description_
     """
-    res = requests.get('http://127.0.0.1:5000/profile',
+    res = requests.get(f"{BASE_URL}/profile",
                        cookies={'session_id': session_id})
     assert(res.status_code == 200)
 
@@ -74,10 +80,10 @@ def log_out(session_id: str) -> None:
     Args:
         session_id (str): _description_
     """
-    res = requests.delete('http://127.0.0.1:5000/sessions',
+    res = requests.delete(f"{BASE_URL}/sessions",
                           cookies={'session_id': session_id})
     if res.status_code == 302:
-        assert(res.url == 'http://127.0.0.1:5000/')
+        assert(res.url == f"{BASE_URL}/")
     else:
         assert(res.status_code == 200)
 
@@ -91,7 +97,7 @@ def reset_password_token(email: str) -> str:
     Returns:
         str: _description_
     """
-    res = requests.post('http://127.0.0.1:5000/reset_password',
+    res = requests.post(f"{BASE_URL}/reset_password",
                         data={'email': email})
     if res.status_code == 200:
         return res.json()['reset_token']
@@ -111,17 +117,12 @@ def update_password(email: str, reset_token: str, new_password: str) -> None:
         'reset_token': reset_token,
         'new_password': new_password
         }
-    res = requests.put('http://127.0.0.1:5000/reset_password',
+    res = requests.put(f"{BASE_URL}/reset_password",
                        data=data)
     if res.status_code == 200:
         assert(res.json() == {"email": email, "message": "Password updated"})
     else:
         assert(res.status_code == 403)
-
-
-EMAIL = "guillaume@holberton.io"
-PASSWD = "b4l0u"
-NEW_PASSWD = "t4rt1fl3tt3"
 
 
 if __name__ == "__main__":
